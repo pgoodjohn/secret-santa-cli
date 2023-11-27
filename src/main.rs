@@ -40,9 +40,9 @@ async fn handle() -> Result<(), Box<dyn Error>> {
 
         println!("{} -> {}", person.name, other_person.name);
 
-        // if let Err(e) = send_secret_santa_email(&person, &other_person).await {
-        //     eprintln!("Failed sending a mail to {}: {}", person.name, e);
-        // }
+        if let Err(e) = send_secret_santa_email(&person, &other_person).await {
+            eprintln!("Failed sending a mail to {}: {}", person.name, e);
+        }
     }
 
     Ok(())
@@ -68,7 +68,7 @@ async fn send_secret_santa_email(sender: &Participant, recipient: &Participant) 
     let client = SesClient::new(Region::EuCentral1); // Choose appropriate AWS region
 
     let subject = "Your Secret Santa Match!";
-    let body_text = format!("Ciao brutto maiale {}, quest'anno il regalo ti tocca farlo a quello stronzo di {}.", sender.name, recipient.name);
+    let body_text = format!("Ciao brutto maiale {}, quest'anno il regalo ti tocca farlo a quello stronzo di {}.", recipient.name, sender.name);
 
     let request = SendEmailRequest {
         destination: Destination {
