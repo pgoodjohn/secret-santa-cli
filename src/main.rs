@@ -38,7 +38,6 @@ async fn handle() -> Result<(), Box<dyn Error>> {
         let person = &people[i];
         let other_person = &people[(i + 1) % people.len()];
 
-        println!("{} -> {}", person.name, other_person.name);
 
         if let Err(e) = send_secret_santa_email(&person, &other_person).await {
             eprintln!("Failed sending a mail to {}: {}", person.name, e);
@@ -64,15 +63,17 @@ fn get_all_participants() -> Result<Vec<Participant>, Box<dyn Error>> {
     Ok(participants)
 }
 
-async fn send_secret_santa_email(sender: &Participant, recipient: &Participant) -> Result<(), Box<dyn Error>> {
+async fn send_secret_santa_email(gift_sender: &Participant, gift_recipient: &Participant) -> Result<(), Box<dyn Error>> {
     let client = SesClient::new(Region::EuCentral1); // Choose appropriate AWS region
 
     let subject = "Your Secret Santa Match!";
-    let body_text = format!("Ciao brutto maiale {}, quest'anno il regalo ti tocca farlo a quello stronzo di {}.", recipient.name, sender.name);
+    let body_text = format!("Ciao brutto maiale {}, quest'anno il regalo ti tocca farlo a quello stronzo di {}.", gift_sender.name, gift_recipient.name);
+
+    println!("{} -> {}", gift_sender.name, gift_recipient.name);
 
     let request = SendEmailRequest {
         destination: Destination {
-            to_addresses: Some(vec![recipient.email.clone()]),
+            to_addresses: Some(vec![gift_sender.email.clone()]),
             ..Default::default()
         },
         message: Message {
