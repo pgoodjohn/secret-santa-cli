@@ -26,7 +26,6 @@ async fn handle() -> Result<(), Box<dyn Error>> {
 
     load_aws_credentials();
 
-    // Assuming a function `get_all_participants` to fetch participants from the database
     let mut people = get_all_participants()?;
     
     // Shuffling participants
